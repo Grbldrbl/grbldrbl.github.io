@@ -18,36 +18,19 @@
     <div id="comments"></div>
 
     <script>
-        async function fetchComments() {
-            const response = await fetch('http://localhost:3000/comments');
-            const comments = await response.json();
-            const commentsDiv = document.getElementById('comments');
-            commentsDiv.innerHTML = '';
-            comments.forEach(comment => {
-                const commentBox = document.createElement('div');
-                commentBox.className = 'comment-box';
-                commentBox.textContent = comment;
-                commentsDiv.appendChild(commentBox);
-            });
-        }
+       const apiURL = 'https://your-backend-service.com/comments';
 
-        document.getElementById('commentForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
-            const comment = document.getElementById('comment').value;
-            if (comment) {
-                await fetch('http://localhost:3000/comments', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ comment })
-                });
-                document.getElementById('comment').value = '';
-                fetchComments();
-            }
-        });
+// Fetch comments
+const response = await fetch(apiURL);
 
-        fetchComments();
+// Submit comment
+await fetch(apiURL, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ comment })
+});
     </script>
 </body>
 </html>
