@@ -12,25 +12,15 @@
 <body>
     <h1>Comment Section</h1>
     <form id="commentForm">
+        <input type="text" id="name" placeholder="Your name"><br>
         <textarea id="comment" rows="4" cols="50" placeholder="Write a comment..."></textarea><br>
         <button type="submit">Submit</button>
     </form>
     <div id="comments"></div>
 
     <script>
-       const apiURL = 'https://raw.githubusercontent.com/Grbldrbl/grbldrbl.github.io/refs/heads/main/server.js';
+        const apiURL = 'https://your-vercel-project.vercel.app/api/comments';
 
-// Fetch comments
-const response = await fetch(apiURL);
-
-// Submit comment
-await fetch(apiURL, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ comment })
-});
-    </script>
-</body>
-</html>
+        async function fetchComments() {
+            const response = await fetch(apiURL);
+            const comments
