@@ -19,8 +19,40 @@
     <div id="comments"></div>
 
     <script>
-        const apiURL = 'https://your-vercel-project.vercel.app/api/comments';
+        const apiURL = 'https://grbldrbl-github-io.vercel.app/api/comments';
 
         async function fetchComments() {
             const response = await fetch(apiURL);
-            const comments
+            const comments = await response.json();
+            const commentsDiv = document.getElementById('comments');
+            commentsDiv.innerHTML = '';
+            comments.forEach(comment => {
+                const commentBox = document.createElement('div');
+                commentBox.className = 'comment-box';
+                commentBox.textContent = comment.name + ': ' + comment.text;
+                commentsDiv.appendChild(commentBox);
+            });
+        }
+
+        document.getElementById('commentForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const comment = document.getElementById('comment').value;
+            if (name && comment) {
+                await fetch(apiURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, text: comment })
+                });
+                document.getElementById('name').value = '';
+                document.getElementById('comment').value = '';
+                fetchComments();
+            }
+        });
+
+        fetchComments();
+    </script>
+</body>
+</html>
