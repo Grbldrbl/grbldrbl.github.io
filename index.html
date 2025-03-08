@@ -3,56 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comment Section</title>
+    <title>Login System</title>
     <style>
         body { font-family: Arial, sans-serif; }
-        .comment-box { margin: 20px 0; }
+        .form-container { margin: 20px; }
+        .form-field { margin-bottom: 10px; }
     </style>
 </head>
 <body>
-    <h1>Comment Section</h1>
-    <form id="commentForm">
-        <input type="text" id="name" placeholder="Your name"><br>
-        <textarea id="comment" rows="4" cols="50" placeholder="Write a comment..."></textarea><br>
-        <button type="submit">Submit</button>
-    </form>
-    <div id="comments"></div>
-
+    <div class="form-container">
+        <h2>Register</h2>
+        <form id="registerForm">
+            <div class="form-field">
+                <label for="registerEmail">Email:</label>
+                <input type="email" id="registerEmail" required>
+            </div>
+            <div class="form-field">
+                <label for="registerPassword">Password:</label>
+                <input type="password" id="registerPassword" required>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+    <div class="form-container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <div class="form-field">
+                <label for="loginEmail">Email:</label>
+                <input type="email" id="loginEmail" required>
+            </div>
+            <div class="form-field">
+                <label for="loginPassword">Password:</label>
+                <input type="password" id="loginPassword" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
     <script>
-        const apiURL = 'https://grbldrbl-github-io.vercel.app/api/comments';
+        const firebaseConfig = {
+            apiKey: "your-api-key",
+            authDomain: "your-auth-domain",
+            projectId: "your-project-id",
+            storageBucket: "your-storage-bucket",
+            messagingSenderId: "your-messaging-sender-id",
+            appId: "your-app-id"
+        };
 
-        async function fetchComments() {
-            const response = await fetch(apiURL);
-            const comments = await response.json();
-            const commentsDiv = document.getElementById('comments');
-            commentsDiv.innerHTML = '';
-            comments.forEach(comment => {
-                const commentBox = document.createElement('div');
-                commentBox.className = 'comment-box';
-                commentBox.textContent = comment.name + ': ' + comment.text;
-                commentsDiv.appendChild(commentBox);
-            });
-        }
+        firebase.initializeApp(firebaseConfig);
 
-        document.getElementById('commentForm').addEventListener('submit', async function(event) {
+        const auth = firebase.auth();
+
+        document.getElementById('registerForm').addEventListener('submit', (event) => {
             event.preventDefault();
-            const name = document.getElementById('name').value;
-            const comment = document.getElementById('comment').value;
-            if (name && comment) {
-                await fetch(apiURL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ name, text: comment })
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    alert('User registered successfully');
+                })
+                .catch((error) => {
+                    alert(error.message);
                 });
-                document.getElementById('name').value = '';
-                document.getElementById('comment').value = '';
-                fetchComments();
-            }
         });
 
-        fetchComments();
+        document.getElementById('loginForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    alert('Login successful');
+                })
+                .catch((error) => {
+                    alert(error.message);
+                });
+        });
     </script>
 </body>
 </html>
