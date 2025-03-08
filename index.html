@@ -18,17 +18,36 @@
     <div id="comments"></div>
 
     <script>
-        document.getElementById('commentForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            var comment = document.getElementById('comment').value;
-            if (comment) {
-                var commentBox = document.createElement('div');
+        async function fetchComments() {
+            const response = await fetch('http://localhost:3000/comments');
+            const comments = await response.json();
+            const commentsDiv = document.getElementById('comments');
+            commentsDiv.innerHTML = '';
+            comments.forEach(comment => {
+                const commentBox = document.createElement('div');
                 commentBox.className = 'comment-box';
                 commentBox.textContent = comment;
-                document.getElementById('comments').appendChild(commentBox);
+                commentsDiv.appendChild(commentBox);
+            });
+        }
+
+        document.getElementById('commentForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const comment = document.getElementById('comment').value;
+            if (comment) {
+                await fetch('http://localhost:3000/comments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ comment })
+                });
                 document.getElementById('comment').value = '';
+                fetchComments();
             }
         });
+
+        fetchComments();
     </script>
 </body>
 </html>
