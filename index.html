@@ -3,76 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website with Comments</title>
+    <title>Comment Section</title>
     <style>
         body { font-family: Arial, sans-serif; }
-        .form-container { margin: 20px; }
-        .form-field { margin-bottom: 10px; }
+        .comment-box { margin: 20px 0; }
     </style>
 </head>
 <body>
-    <!-- Your existing content -->
+    <h1>Comment Section</h1>
+    <form id="commentForm">
+        <input type="text" id="name" placeholder="Your name"><br>
+        <textarea id="comment" rows="4" cols="50" placeholder="Write a comment..."></textarea><br>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="comments"></div>
+<script src="https://cdn.jsdelivr.net/npm/bad-words@3.0.3/lib/badwords.min.js"></script>
+<script>
+    const filter = new BadWords();
 
-    <!-- Comments Section -->
-    <section id="comments">
-        <h2>Comments</h2>
-        <div id="vercel-comments"></div>
-    </section>
-
-    <!-- Existing Firebase Auth Scripts -->
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    document.getElementById('comment-form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const comment = document.getElementById('message').value;
+        if (filter.isProfane(comment)) {
+            alert('Please avoid using inappropriate language.');
+        } else {
+            // Submit the comment
+        }
+    });
+</script>
     <script>
-        const firebaseConfig = {
-            apiKey: "your-api-key",
-            authDomain: "your-auth-domain",
-            projectId: "your-project-id",
-            storageBucket: "your-storage-bucket",
-            messagingSenderId: "your-messaging-sender-id",
-            appId: "your-app-id"
-        };
+        const apiURL = 'https://grbldrbl-github-io.vercel.app/api/comments';
 
-        firebase.initializeApp(firebaseConfig);
-
-        const auth = firebase.auth();
-
-        document.getElementById('registerForm').addEventListener('submit', (event) => {
-            event.preventDefault();
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            auth.createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    alert('User registered successfully');
-                })
-                .catch((error) => {
-                    alert(error.message);
-                });
-        });
-
-        document.getElementById('loginForm').addEventListener('submit', (event) => {
-            event.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    alert('Login successful');
-                })
-                .catch((error) => {
-                    alert(error.message);
-                });
-        });
-    </script>
-
-    <!-- Vercel Comments Script -->
-    <script src="https://comments.vercel.app/js/comments.js" async></script>
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            const vercelComments = new Comments({
-                element: '#vercel-comments',
-                apiKey: 'your-api-key',
-                projectId: 'your-project-id'
+        async function fetchComments() {
+            const response = await fetch(apiURL);
+            const comments = await response.json();
+            const commentsDiv = document.getElementById('comments');
+            commentsDiv.innerHTML = '';
+            comments.forEach(comment => {
+                const commentBox = document.createElement('div');
+                commentBox.className = 'comment-box';
+                commentBox.textContent = comment.name + ': ' + comment.text;
+                commentsDiv.appendChild(commentBox);
             });
+        }
+
+        document.getElementById('commentForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const comment = document.getElementById('comment').value;
+            if (name && comment) {
+                await fetch(apiURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, text: comment })
+                });
+                document.getElementById('name').value = '';
+                document.getElementById('comment').value = '';
+                fetchComments();
+            }
         });
+
+        fetchComments();
     </script>
 </body>
 </html>
