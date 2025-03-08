@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment Section</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .comment-box { margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>Comment Section</h1>
+    <form id="commentForm">
+        <textarea id="comment" rows="4" cols="50" placeholder="Write a comment..."></textarea><br>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="comments"></div>
+
+    <script>
+        document.getElementById('commentForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var comment = document.getElementById('comment').value;
+            if (comment) {
+                var commentBox = document.createElement('div');
+                commentBox.className = 'comment-box';
+                commentBox.textContent = comment;
+                document.getElementById('comments').appendChild(commentBox);
+                document.getElementById('comment').value = '';
+            }
+        });
+    </script>
+</body>
+</html>
