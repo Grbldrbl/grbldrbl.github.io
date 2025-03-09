@@ -17,51 +17,51 @@
         <button type="submit">Submit</button>
     </form>
     <div id="comments"></div>
-<script src="https://cdn.jsdelivr.net/npm/bad-words@3.0.3/lib/badwords.min.js"></script>
-<script>
-    const filter = new BadWords();
+    <script src="https://cdn.jsdelivr.net/npm/bad-words@3.0.3/lib/badwords.min.js"></script>
+    <script>
+        const filter = new BadWords();
 
-    document.getElementById('comment-form').addEventListener('submit', (event) => {
-        event.preventDefault();
-        const comment = document.getElementById('message').value;
-        if (filter.isProfane(comment)) {
-            alert('Please avoid using inappropriate language.');
-        } else {
-            // Submit the comment
-        }
-    });
-</script>
+        document.getElementById('commentForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const comment = document.getElementById('comment').value;
+            if (filter.isProfane(comment)) {
+                alert('Please avoid using inappropriate language.');
+            } else {
+                // Submit the comment
+            }
+        });
+    </script>
     <script>
         const apiURL = 'https://grbldrbl-github-io.vercel.app/api/comments';
-            async function fetchComments() {
-        const response = await fetch('/api/comments');
-        const comments = await response.json();
-        const commentList = document.getElementById('vercel-comments');
-        commentList.innerHTML = comments.map((comment, index) => `
-            <p><strong>${comment.name}</strong>: ${comment.message} 
-            <button onclick="deleteComment(${index})">Delete</button></p>
-        `).join('');
-    }
+        async function fetchComments() {
+            const response = await fetch(apiURL);
+            const comments = await response.json();
+            const commentList = document.getElementById('comments');
+            commentList.innerHTML = comments.map((comment, index) => `
+                <p><strong>${comment.name}</strong>: ${comment.message} 
+                <button onclick="deleteComment(${index})">Delete</button></p>
+            `).join('');
+        }
 
-    async function deleteComment(index) {
-        await fetch(`/api/comments/${index}`, { method: 'DELETE' });
-        fetchComments();
-    }
+        async function deleteComment(index) {
+            await fetch(`${apiURL}/${index}`, { method: 'DELETE' });
+            fetchComments();
+        }
 
-    document.getElementById('comment-form').addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const name = document.getElementById('name').value;
-        const message = document.getElementById('message').value;
-        await fetch('/api/comments', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, message })
+        document.getElementById('commentForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const message = document.getElementById('comment').value;
+            await fetch(apiURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, message })
+            });
+            fetchComments();
+            document.getElementById('commentForm').reset();
         });
-        fetchComments();
-        document.getElementById('comment-form').reset();
-    });
 
-   
+        fetchComments();
     </script>
 </body>
 </html>
