@@ -18,6 +18,16 @@ app.get('/comments', (req, res) => {
     res.status(200).send(comments);
 });
 
+app.delete('/comments/:index', (req, res) => {
+    const index = parseInt(req.params.index);
+    if (index >= 0 && index < comments.length) {
+        comments.splice(index, 1);
+        res.status(200).send({ message: 'Comment deleted.' });
+    } else {
+        res.status(404).send({ message: 'Comment not found.' });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
