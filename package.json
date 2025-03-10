@@ -1,0 +1,11 @@
+{
+  "name": "grbldrbl.github.io",
+  "version": "1.1.0",
+  "description": "It's my website. with comments!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
