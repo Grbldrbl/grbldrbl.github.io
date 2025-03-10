@@ -30,17 +30,38 @@
     </div>
 
     <script>
-        document.getElementById('commentForm').addEventListener('submit', function(event) {
+        document.getElementById('commentForm').addEventListener('submit', async function(event) {
             event.preventDefault();
             const username = document.getElementById('username').value;
             const comment = document.getElementById('comment').value;
-            const commentSection = document.getElementById('commentsList');
-            const newComment = document.createElement('div');
-            newComment.classList.add('comment');
-            newComment.innerHTML = `<strong>${username}</strong><p>${comment}</p>`;
-            commentSection.appendChild(newComment);
+
+            // Post comment to the API
+            await fetch('/api/comments', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, comment })
+            });
+
+            // Fetch and display updated comments
+            fetchComments();
             document.getElementById('commentForm').reset();
         });
+
+        async function fetchComments() {
+            const response = await fetch('/api/comments');
+            const comments = await response.json();
+            const commentSection = document.getElementById('commentsList');
+            commentSection.innerHTML = '';
+            comments.forEach(({ username, comment, timestamp }) => {
+                const newComment = document.createElement('div');
+                newComment.classList.add('comment');
+                newComment.innerHTML = `<strong>${username}</strong><p>${comment}</p><small>${new Date(timestamp).toLocaleString()}</small>`;
+                commentSection.appendChild(newComment);
+            });
+        }
+
+        // Initial fetch of comments
+        fetchComments();
     </script>
 </body>
 </html>
